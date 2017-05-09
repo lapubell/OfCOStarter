@@ -30,4 +30,14 @@ class OfCOStarterClassTest extends PHPUnit_Framework_TestCase{
         $this->assertEquals([], $theme->getConfig( $config ));
     }
 
+    /** @test */
+    function configuration_must_be_of_type_array()
+    {
+        $theme = new \Lapubell\WordpressStarter\OfCOStarter;
+        $config = "";
+        $theme->setConfig( $config );
+
+        $this->assertNull( $theme->getConfig() );
+    }
+
 }

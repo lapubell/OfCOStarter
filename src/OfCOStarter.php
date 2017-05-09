@@ -19,7 +19,9 @@ class OfCOStarter{
      */
     public function setConfig( $config )
     {
-        $this->config = $config;
+        if (is_array($config)) {
+            $this->config = $config;
+        }
     }
 
     /**
