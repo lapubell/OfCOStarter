@@ -1,0 +1,26 @@
+{
+    "name": "lapubell/wordpress-starter",
+    "description": "Helper class for the OfCO starter theme.",
+    "keywords": ["wordpress", "composer", "package"],
+    "license": "DBAD",
+    "authors": [
+        {
+            "name": "Kurtis Holsapple",
+            "email": "kurtis@openfunctioncomputers.com"
+        }
+    ],
+    "type": "project",
+    "require": {
+		"php": ">=7.0",
+        "duncan3dc/blade": "^3.4",
+        "jjgrainger/posttypes": "^1.1"
+    },
+	"require-dev": {
+		"phpunit/phpunit": "5.2.*"
+    },
+	"autoload": {
+        "psr-4": {
+            "Lapubell\\WordpressStarter\\": "src/"
+        }
+    }
+}
