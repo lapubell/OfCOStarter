@@ -1,6 +1,8 @@
 <?php
 namespace Lapubell\WordpressStarter;
 
+use duncan3dc\Laravel\BladeInstance;
+
 /**
 *  OfCO Starter Class
 *
@@ -14,14 +16,31 @@ class OfCOStarter{
     private $config;
 
     /**
-     * set the application configuration
+     * look for the menu locations inside the configuration and register them
+     */
+    private function registerMenus() {
+        if (!isset($this->config['menus'])) {
+            return;
+        }
+
+        $menus = $this->config['menus'];
+        add_action( 'init', function() use ($menus) {
+            register_nav_menus( $menus );
+        });
+    }
+
+    /**
+     * set the application configuration, then bootstrap the options
      * @param array $config this should have all the options that you want defined in your theme
      */
     public function setConfig( $config )
     {
-        if (is_array($config)) {
-            $this->config = $config;
+        if (!is_array($config)) {
+            return;
         }
+
+        $this->config = $config;
+        $this->registerMenus();
     }
 
     /**
@@ -31,6 +50,27 @@ class OfCOStarter{
     public function getConfig()
     {
         return $this->config;
+    }
+
+
+    /**
+     * return the view so that it can be parsed or displayed
+     * @param  string $view name of the view (without the .blade.php extension)
+     * @return string       the rendered view
+     */
+    public function showView($view = null) {
+        // if you don't pass a view explictly, and we aren't in the wordpress ecosystem, then return false
+        if (is_null($view) && !function_exists("get_post_type")) {
+            return false;
+        }
+
+        if (is_null($view)) {
+            $view = get_post_type();
+        }
+
+        $blade = new BladeInstance($this->config['views'], $this->config['viewsCache']);
+
+        return $blade->render($view);
     }
 
 }

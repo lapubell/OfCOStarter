@@ -40,4 +40,11 @@ class OfCOStarterClassTest extends PHPUnit_Framework_TestCase{
         $this->assertNull( $theme->getConfig() );
     }
 
+    /** @test */
+    function trying_to_render_a_view_that_does_not_exist_will_return_false()
+    {
+        $theme = new \Lapubell\WordpressStarter\OfCOStarter;
+        $this->assertFalse( $theme->showView() );
+    }
+
 }
