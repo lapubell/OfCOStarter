@@ -1,6 +1,7 @@
 <?php
 namespace Lapubell\WordpressStarter;
 
+use PostTypes\PostType;
 use duncan3dc\Laravel\BladeInstance;
 
 /**
@@ -16,9 +17,31 @@ class OfCOStarter{
     private $config;
 
     /**
+     * call all the internal methods needed to make the magic happen
+     */
+    private function bootstrapTheme()
+    {
+        $this->setThemeSupport();
+        $this->registerMenus();
+        $this->registerCPT();
+    }
+
+    /**
+     * add in basic wordpress functionality based on the config settings
+     */
+    private function setThemeSupport()
+    {
+        if (isset($this->config['featuredImages']) && $this->config['featuredImages']) {
+            add_theme_support( 'post-thumbnails' );
+        }
+    }
+
+
+    /**
      * look for the menu locations inside the configuration and register them
      */
-    private function registerMenus() {
+    private function registerMenus()
+    {
         if (!isset($this->config['menus'])) {
             return;
         }
@@ -40,7 +63,7 @@ class OfCOStarter{
         }
 
         $this->config = $config;
-        $this->registerMenus();
+        $this->bootstrapTheme();
     }
 
     /**
@@ -73,4 +96,17 @@ class OfCOStarter{
         return $blade->render($view);
     }
 
+
+    /**
+     * register the different custom post types from the application configuration
+     */
+    private function registerCPT() {
+        if (!isset($this->config['cpt'])) {
+            return;
+        }
+        
+        foreach ($this->config['cpt'] as $cpt) {
+            $staff = new PostType($cpt['name']);
+        }
+    }
 }
