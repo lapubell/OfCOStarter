@@ -25,6 +25,7 @@ class OfCOStarter{
         $this->registerMenus();
         $this->registerCPT();
         $this->registerTemplates();
+        $this->registerOptionsPages();
     }
 
     /**
@@ -134,6 +135,22 @@ class OfCOStarter{
         
         foreach ($this->config['cpt'] as $cpt) {
             $staff = new PostType($cpt['name']);
+        }
+    }
+
+    /**
+     * set up the options pages for the different locations in the Wordpress Admin area
+     */
+    private function registerOptionsPages()
+    {
+        if (!function_exists('acf_add_options_page') && count($this->config['acf_options'])) {
+            add_action( 'admin_notices', function() {
+                echo '<div class="notice notice-error is-dismissible"><p>You have added options pages in your configuration, but the ACF plugin is not currently active.</p></div>';
+            });
+        }
+
+        foreach ($this->config['acf_options'] as $parent_slug => $name) {
+            acf_add_options_page($name);
         }
     }
 }
