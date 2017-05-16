@@ -24,6 +24,29 @@ class OfCOStarter{
         $this->setThemeSupport();
         $this->registerMenus();
         $this->registerCPT();
+        $this->registerTemplates();
+    }
+
+    /**
+     * manually register page templates
+     */
+    private function registerTemplates()
+    {
+        if (!isset($this->config['templates']) || !count($this->config['templates'])) {
+            return;
+        }
+
+        $templatesToAdd = [];
+        foreach ($this->config['templates'] as $templateName) {
+            $templatesToAdd[ sanitize_title_with_dashes($templateName) ] = $templateName;
+        }
+
+        add_filter( 'theme_page_templates', function($templates) use ($templatesToAdd) {
+            foreach ($templatesToAdd as $slug => $name) {
+                $templates[ $slug ] = $name;
+            }
+            return $templates;
+        });
     }
 
     /**
@@ -35,7 +58,6 @@ class OfCOStarter{
             add_theme_support( 'post-thumbnails' );
         }
     }
-
 
     /**
      * look for the menu locations inside the configuration and register them
@@ -75,16 +97,21 @@ class OfCOStarter{
         return $this->config;
     }
 
-
     /**
      * return the view so that it can be parsed or displayed
      * @param  string $view name of the view (without the .blade.php extension)
      * @return string       the rendered view
      */
-    public function showView($view = null) {
+    public function showView($view = null)
+    {
         // if you don't pass a view explictly, and we aren't in the wordpress ecosystem, then return false
         if (is_null($view) && !function_exists("get_post_type")) {
             return false;
+        }
+
+        // check if is page and has a template
+        if (is_page() && get_page_template_slug()) {
+            $view = get_page_template_slug();
         }
 
         if (is_null($view)) {
@@ -96,11 +123,11 @@ class OfCOStarter{
         return $blade->render($view);
     }
 
-
     /**
      * register the different custom post types from the application configuration
      */
-    private function registerCPT() {
+    private function registerCPT()
+    {
         if (!isset($this->config['cpt'])) {
             return;
         }
