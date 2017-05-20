@@ -26,6 +26,7 @@ class OfCOStarter{
         $this->registerCPT();
         $this->registerTemplates();
         $this->registerOptionsPages();
+        $this->addImageSizes();
     }
 
     /**
@@ -103,7 +104,7 @@ class OfCOStarter{
      * @param  string $view name of the view (without the .blade.php extension)
      * @return string       the rendered view
      */
-    public function showView($view = null)
+    public function showView($data, $view = null)
     {
         // if you don't pass a view explictly, and we aren't in the wordpress ecosystem, then return false
         if (is_null($view) && !function_exists("get_post_type")) {
@@ -119,9 +120,18 @@ class OfCOStarter{
             $view = get_post_type();
         }
 
+        if (is_404()) {
+            $view = "404";
+        }
+
+        $viewFile = $this->config['views'] . '/' . $view . '.blade.php';
+        if (! file_exists( $viewFile ) ) {
+            die( 'Could not find view file: ' . $viewFile);
+        }
+
         $blade = new BladeInstance($this->config['views'], $this->config['viewsCache']);
 
-        return $blade->render($view);
+        return $blade->render($view, $data);
     }
 
     /**
@@ -151,6 +161,17 @@ class OfCOStarter{
 
         foreach ($this->config['acf_options'] as $parent_slug => $name) {
             acf_add_options_page($name);
+        }
+    }
+
+    private function addImageSizes()
+    {
+        if (!isset($this->config['image_sizes'])) {
+            return;
+        }
+
+        foreach ($this->config['image_sizes'] as $size) {
+            add_image_size($size['name'], $size['width'], $size['height'], $size['crop']);
         }
     }
 }
