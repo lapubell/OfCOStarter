@@ -124,6 +124,14 @@ class OfCOStarter{
             $view = "404";
         }
 
+        if (is_home()) {
+            $view = "home";
+        }
+
+        if (is_category()) {
+            $view = "category";
+        }
+
         $viewFile = $this->config['views'] . '/' . $view . '.blade.php';
         if (! file_exists( $viewFile ) ) {
             die( 'Could not find view file: ' . $viewFile);
