@@ -132,6 +132,10 @@ class OfCOStarter{
             $view = "category";
         }
 
+        if (is_search()) {
+            $view = "search";
+        }
+
         $viewFile = $this->config['views'] . '/' . $view . '.blade.php';
         if (! file_exists( $viewFile ) ) {
             die( 'Could not find view file: ' . $viewFile);
