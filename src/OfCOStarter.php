@@ -128,22 +128,43 @@ class OfCOStarter{
             $view = "home";
         }
 
+        // this tries to emulate the WP Template Hierarchy
         if (is_category()) {
-            $view = "category";
+            $category = get_category(get_query_var('cat'),false);
+
+            if ($this->checkForView("category-" . $category->slug)) {
+                $view = "category-" . $category->slug;
+            } else {
+                $view = "category";
+            }
         }
 
         if (is_search()) {
             $view = "search";
         }
 
-        $viewFile = $this->config['views'] . '/' . $view . '.blade.php';
-        if (! file_exists( $viewFile ) ) {
+        if (!$this->checkForView( $view )) {
             die( 'Could not find view file: ' . $viewFile);
         }
 
         $blade = new BladeInstance($this->config['views'], $this->config['viewsCache']);
 
         return $blade->render($view, $data);
+    }
+
+    /**
+     * check to see if the view file exists
+     * @param  string $name the filename for the view without the extension
+     * @return boolean
+     */
+    private function checkForView( $name )
+    {
+        $viewFile = $this->config['views'] . '/' . $name . '.blade.php';
+        if ( !file_exists( $viewFile ) ) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
