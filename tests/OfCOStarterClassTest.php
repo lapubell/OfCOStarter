@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
 *  Corresponding Class to test YourClass class
@@ -8,8 +8,9 @@
 *
 *  @author yourname
 */
-class OfCOStarterClassTest extends PHPUnit_Framework_TestCase{
 
+class OfCOStarterClassTest extends PHPUnit_Framework_TestCase
+{
     /**
     * Just check if the OfCOStarter has no syntax error
     * @test
@@ -17,7 +18,7 @@ class OfCOStarterClassTest extends PHPUnit_Framework_TestCase{
     function no_syntax_errors()
     {
         $theme = new \Lapubell\WordpressStarter\OfCOStarter;
-        $this->assertTrue( is_object($theme) );
+        $this->assertTrue(is_object($theme));
     }
 
     /** @test */
@@ -25,9 +26,9 @@ class OfCOStarterClassTest extends PHPUnit_Framework_TestCase{
     {
         $theme = new \Lapubell\WordpressStarter\OfCOStarter;
         $config = [];
-        $theme->setConfig( $config );
+        $theme->setConfig($config);
 
-        $this->assertEquals([], $theme->getConfig( $config ));
+        $this->assertEquals([], $theme->getConfig($config));
     }
 
     /** @test */
@@ -35,16 +36,15 @@ class OfCOStarterClassTest extends PHPUnit_Framework_TestCase{
     {
         $theme = new \Lapubell\WordpressStarter\OfCOStarter;
         $config = "";
-        $theme->setConfig( $config );
+        $theme->setConfig($config);
 
-        $this->assertNull( $theme->getConfig() );
+        $this->assertNull($theme->getConfig());
     }
 
     /** @test */
     function trying_to_render_a_view_that_does_not_exist_will_return_false()
     {
         $theme = new \Lapubell\WordpressStarter\OfCOStarter;
-        $this->assertFalse( $theme->showView() );
+        $this->assertFalse($theme->showView());
     }
-
 }
