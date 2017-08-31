@@ -11,7 +11,8 @@ use duncan3dc\Laravel\BladeInstance;
 *
 *  @author lapubell
 */
-class OfCOStarter{
+class OfCOStarter
+{
 
     /**  @var array $config configuration array to generate the correct settings in wordpress */
     private $config;
@@ -43,7 +44,7 @@ class OfCOStarter{
             $templatesToAdd[ sanitize_title_with_dashes($templateName) ] = $templateName;
         }
 
-        add_filter( 'theme_page_templates', function($templates) use ($templatesToAdd) {
+        add_filter('theme_page_templates', function ($templates) use ($templatesToAdd) {
             foreach ($templatesToAdd as $slug => $name) {
                 $templates[ $slug ] = $name;
             }
@@ -57,7 +58,7 @@ class OfCOStarter{
     private function setThemeSupport()
     {
         if (isset($this->config['featuredImages']) && $this->config['featuredImages']) {
-            add_theme_support( 'post-thumbnails' );
+            add_theme_support('post-thumbnails');
         }
     }
 
@@ -71,8 +72,8 @@ class OfCOStarter{
         }
 
         $menus = $this->config['menus'];
-        add_action( 'init', function() use ($menus) {
-            register_nav_menus( $menus );
+        add_action('init', function () use ($menus) {
+            register_nav_menus($menus);
         });
     }
 
@@ -80,7 +81,7 @@ class OfCOStarter{
      * set the application configuration, then bootstrap the options
      * @param array $config this should have all the options that you want defined in your theme
      */
-    public function setConfig( $config )
+    public function setConfig($config)
     {
         if (!is_array($config)) {
             return;
@@ -130,7 +131,7 @@ class OfCOStarter{
 
         // this tries to emulate the WP Template Hierarchy
         if (is_category()) {
-            $category = get_category(get_query_var('cat'),false);
+            $category = get_category(get_query_var('cat'), false);
 
             if ($this->checkForView("category-" . $category->slug)) {
                 $view = "category-" . $category->slug;
@@ -139,12 +140,22 @@ class OfCOStarter{
             }
         }
 
+        if (is_tag()) {
+            $tag = get_queried_object();
+
+            if ($this->checkForView("tag-" . $tag->slug)) {
+                $view = "tag-" . $tag->slug;
+            } else {
+                $view = "tag";
+            }
+        }
+
         if (is_search()) {
             $view = "search";
         }
 
-        if (!$this->checkForView( $view )) {
-            die( 'Could not find view file: ' . $viewFile);
+        if (!$this->checkForView($view)) {
+            die('Could not find view file: ' . $viewFile);
         }
 
         $blade = new BladeInstance($this->config['views'], $this->config['viewsCache']);
@@ -157,10 +168,10 @@ class OfCOStarter{
      * @param  string $name the filename for the view without the extension
      * @return boolean
      */
-    private function checkForView( $name )
+    private function checkForView($name)
     {
         $viewFile = $this->config['views'] . '/' . $name . '.blade.php';
-        if ( !file_exists( $viewFile ) ) {
+        if (!file_exists($viewFile)) {
             return false;
         }
 
@@ -175,7 +186,7 @@ class OfCOStarter{
         if (!isset($this->config['cpt'])) {
             return;
         }
-        
+
         foreach ($this->config['cpt'] as $cpt) {
             $staff = new PostType($cpt['name']);
         }
@@ -188,7 +199,7 @@ class OfCOStarter{
     {
         // add a notice and return early if we don't have ACF Pro for options pages
         if (!function_exists('acf_add_options_page') && count($this->config['acf_options'])) {
-            add_action( 'admin_notices', function() {
+            add_action('admin_notices', function () {
                 echo '<div class="notice notice-error is-dismissible"><p>You have added options pages in your configuration, but the ACF plugin is not currently active.</p></div>';
             });
             return;
